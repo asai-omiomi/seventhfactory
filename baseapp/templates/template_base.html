@@ -1,0 +1,27 @@
+<!-- template_base.html -->
+
+{% load static %}
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+   
+    <title>{% block title %}{% endblock %}</title>
+   
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+   
+    {% block head %}{% endblock %}
+  </head>
+
+  <body>
+      
+    {% include 'template_header.html' %}
+
+    {% block contents %}{% endblock %}
+
+    {% block footer %}{% endblock %}
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  </body>
+</html>

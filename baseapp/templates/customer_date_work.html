@@ -1,0 +1,265 @@
+<!-- customer_date_work.html -->
+
+{% extends 'template_base.html' %}
+
+{% block title %}利用者勤務情報設定{% endblock %}
+
+{% block contents %}
+
+<script>
+    function toggleFieldsByWorkStatus() {
+        const workStatusField = document.getElementById('id_work_status');
+        const isOn = workStatusField.value == '0';
+        const targetFields = document.querySelectorAll('.work-fields');
+
+        targetFields.forEach(field => {
+            field.style.display = isOn ? 'block' : 'none';
+            const inputs = field.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.disabled = !isOn;
+            });
+        });
+    }
+
+    function toggleFieldsByMorningTransport() {
+        const morningTransportField = document.getElementById('id_morning_transport_means');
+        const isPickup = morningTransportField.value == '0';
+        const targetFields = document.querySelectorAll('.pickup-fields');
+
+        targetFields.forEach(field => {
+            field.style.display = isPickup ? 'block' : 'none';
+            const inputs = field.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.disabled = !isPickup;
+            });
+        });
+    }
+
+    function toggleFieldsByReturnTransport() {
+        const morningTransportField = document.getElementById('id_return_transport_means');
+        const isDropoff = morningTransportField.value == '0';
+        const targetFields = document.querySelectorAll('.dropoff-fields');
+
+        targetFields.forEach(field => {
+            field.style.display = isDropoff ? 'block' : 'none';
+            const inputs = field.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.disabled = !isDropoff;
+            });
+        });
+    }
+
+    function toggleFieldsByLunch() {
+        const lunch = document.getElementById('id_lunch');
+        const eatLunch = (lunch.value == '0' || lunch.value == '1');
+
+        const targetFields = document.querySelectorAll('.eat-lunch-at');       
+
+        targetFields.forEach(field => {
+            field.style.display = eatLunch ? 'inline-block' : 'none';
+        });
+    }
+   
+
+    // ボタンの表示/非表示を管理
+    function updateButtons() {
+        const workSections = Array.from(document.querySelectorAll('.work-section'));
+        const lastVisibleSectionReverseIndex = workSections.slice().reverse().findIndex(s => s.style.display !== 'none');
+        const lastVisibleSectionIndex = workSections.length - 1 - lastVisibleSectionReverseIndex;
+
+        // 追加ボタン
+        const addButton = document.getElementById('add-button');
+        if(lastVisibleSectionIndex == workSections.length - 1){
+            addButton.disabled = true;
+        } else{
+            addButton.disabled = false;
+        }
+
+        // 削除ボタン
+        workSections.forEach((section, index) => {
+            const removeButton = section.querySelector('.remove-button');
+
+            if(index == lastVisibleSectionIndex){
+                if(index != 0){
+                    removeButton.style.display = 'inline-block'; 
+                }else{
+                    removeButton.style.display = 'none'; 
+                }
+            } else{
+                removeButton.style.display = 'none';                    
+            }
+        });
+    }
+
+    function addEventListnerToWorkSectionsButtons(){
+        
+        const workSections = Array.from(document.querySelectorAll('.work-section'));
+
+        const addButton = document.getElementById('add-button');
+        addButton.addEventListener('click', (event) => {
+            const nextSection = workSections.find(s => s.style.display === 'none');
+            if (nextSection) {
+                nextSection.style.display = 'block';  // 次の勤務セクションを表示
+                updateButtons();
+            }
+        });
+        
+        workSections.forEach(section => {
+            const removeButton = section.querySelector('.remove-button');
+            removeButton.addEventListener('click', (event) => {
+                section.style.display = 'none';
+                updateButtons(); 
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        toggleFieldsByWorkStatus();
+        toggleFieldsByMorningTransport();
+        toggleFieldsByReturnTransport();
+        toggleFieldsByLunch();
+        updateButtons();
+
+        document.getElementById('id_work_status').addEventListener('change', toggleFieldsByWorkStatus);
+        document.getElementById('id_morning_transport_means').addEventListener('change', toggleFieldsByMorningTransport);
+        document.getElementById('id_return_transport_means').addEventListener('change', toggleFieldsByReturnTransport);
+        document.getElementById('id_lunch').addEventListener('change', toggleFieldsByLunch);        
+        addEventListnerToWorkSectionsButtons();
+    });
+
+</script>
+
+<h1>利用者勤務情報設定</h1>
+
+<h5>利用者名: {{ customer_name }}</h5>
+
+<form action="{% url 'config_work_update_customer' customer_id=customer_id work_date=work_date%}"
+    method="post">
+    {% csrf_token %}
+
+    <p>日付: {{ work_date }}</p>
+
+    <p>通所/在宅/欠席:{{ form.work_status }}</p>
+    
+    <div class="work-fields morning-transport-fields">
+        <div>
+            <label for="{{ form.morning_transport_means.id_for_label }}">朝の交通手段</label>
+            {{ form.morning_transport_means }}
+        </div>
+        <div class="pickup-fields">
+            <div>
+                <label for="{{ form.pickup_place.id_for_label }}">場所</label>
+                {{ form.pickup_place }}
+            </div>
+            <div>
+                <label for="{{ form.pickup_staff.id_for_label }}">送迎スタッフ</label>
+                {{ form.pickup_staff }}
+            </div>
+            <div>
+                <label for="{{ form.pickup_time.id_for_label }}">時間</label>
+                {{ form.pickup_time }}
+            </div>
+            <div>
+                <label for="{{ form.pickup_car.id_for_label }}">送迎車</label>
+                {{ form.pickup_car }}
+            </div>
+        </div>
+    </div>
+
+    <div class="work-fields return-transport-fields">
+        <div>
+            <label for="{{ form.return_transport_means.id_for_label }}">帰りの交通手段</label>
+            {{ form.return_transport_means }}
+        </div>
+        <div class="dropoff-fields">
+            <div>
+                <label for="{{ form.dropoff_place.id_for_label }}">場所</label>
+                {{ form.dropoff_place }}
+            </div>
+            <div>
+                <label for="{{ form.dropoff_staff.id_for_label }}">送迎スタッフ</label>
+                {{ form.dropoff_staff }}
+            </div>
+            <div>
+                <label for="{{ form.dropoff_time.id_for_label }}">時間</label>
+                {{ form.dropoff_time }}
+            </div>
+            <div>
+                <label for="{{ form.dropoff_car.id_for_label }}">送迎車</label>
+                {{ form.dropoff_car }}
+            </div>
+        </div>
+    </div>
+    
+    <div class="work-fields">
+        <label for="{{ form.lunch.id_for_label }}">お弁当</label>
+        {{ form.lunch }}
+    </div>
+    
+    <div class="work-fields">
+        <div id="work1" class="work-section">
+            勤務１
+            {{ form.work1_start_time }}
+            ～
+            {{ form.work1_end_time }}
+            {{ form.work1_place }}
+            {% if form.work1_place.errors %}
+            <div class="text-danger">
+                {% for error in form.work1_place.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <label class="eat-lunch-at">
+                <input type="radio" name="eat_lunch_at" value="1" {% if form.instance.eat_lunch_at == 1 %}checked{% endif %}>
+                昼食をここで食べる
+            </label>
+            <button type=button class="remove-button btn-sm">削除</button>  
+        </div>
+    
+        <div id="work2" class="work-section" style="display: none;">   
+            勤務２
+            {{ form.work2_start_time }}
+            ～
+            {{ form.work2_end_time }}
+            {{ form.work2_place }}
+            <label class="eat-lunch-at">
+                <input type="radio" name="eat_lunch_at" value="2" {% if form.instance.eat_lunch_at == 2 %}checked{% endif %}>
+                昼食をここで食べる
+            </label>
+            <button type=button class="remove-button btn-sm">削除</button>
+        </div>
+
+        <div id="work3" class="work-section" style="display: none;">     
+            勤務３
+            {{ form.work3_start_time }}
+            ～
+            {{ form.work3_end_time }}
+            {{ form.work3_place }}
+            <label class="eat-lunch-at">
+                <input type="radio" name="eat_lunch_at" value="3" {% if form.instance.eat_lunch_at == 3 %}checked{% endif %}>
+                昼食をここで食べる
+            </label>
+            <button type=button class="remove-button btn-sm">削除</button>
+        </div>
+        <div id="work4" class="work-section" style="display: none;">     
+            勤務４
+            {{ form.work4_start_time }}
+            ～
+            {{ form.work4_end_time }}
+            {{ form.work4_place }}
+            <label class="eat-lunch-at">
+                <input type="radio" name="eat_lunch_at" value="4" {% if form.instance.eat_lunch_at == 4 %}checked{% endif %}>
+                昼食をここで食べる
+            </label>
+            <button type=button class="remove-button btn-sm">削除</button>
+        </div>
+        <button type=button id="add-button" class="btn-sm">勤務を追加</button>
+    </div>
+
+    <button class="btn-sm" type="submit" name="action" value="save">保存</button>
+    <button class="btn-sm" type="submit" name="action" value="pattern" >パターンを呼び出す</button>
+    <button class="btn-sm" type="submit" name="action" value="cancel">キャンセル</button>
+</form>
+
+{% endblock %}
