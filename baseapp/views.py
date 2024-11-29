@@ -822,9 +822,11 @@ def config_staff_dispatch(request):
     if 'up' in request.POST:
         staff_id = request.POST.get('up')
         move_staff_up(staff_id)
+        return redirect('staff')
     elif 'down' in request.POST:
         staff_id = request.POST.get('down')
         move_staff_down(staff_id)
+        return redirect('staff')
     elif 'create' in request.POST:
         return redirect('config_staff_create')
     elif 'update' in request.POST:
@@ -833,7 +835,7 @@ def config_staff_dispatch(request):
     elif 'delete' in request.POST:
         staff_id = request.POST.get('delete')
         return redirect('config_staff_delete', staff_id=staff_id)
-    return redirect(staff)
+    return redirect('staff')
 
 def move_staff_up(staff_id):
     staff = get_object_or_404(StaffModel, pk=staff_id)
@@ -843,8 +845,6 @@ def move_staff_up(staff_id):
         staff.order, previous_staff.order = previous_staff.order, staff.order
         staff.save()
         previous_staff.save()
-
-    return redirect(staff)
 
 def move_staff_down(staff_id):
     staff = get_object_or_404(StaffModel, pk=staff_id)
@@ -895,9 +895,11 @@ def config_customer_dispatch(request):
     if 'up' in request.POST:
         customer_id = request.POST.get('up')
         move_customer_up(customer_id)
+        return redirect('customer')
     elif 'down' in request.POST:
         customer_id = request.POST.get('down')
         move_customer_down(customer_id)
+        return redirect('customer')
     elif 'create' in request.POST:
         return redirect('config_customer_create')
     elif 'update' in request.POST:
@@ -907,7 +909,7 @@ def config_customer_dispatch(request):
         customer_id = request.POST.get('delete')
         return redirect('config_customer_delete', customer_id=customer_id)  
     
-    return redirect(customer)
+    return redirect('customer')
 
 def move_customer_up(customer_id):
     customer = get_object_or_404(CustomerModel, pk=customer_id)
@@ -917,8 +919,6 @@ def move_customer_up(customer_id):
         customer.order, previous_customer.order = previous_customer.order, customer.order
         customer.save()
         previous_customer.save()
-
-    return redirect(customer)
 
 def move_customer_down(customer_id):
     customer = get_object_or_404(CustomerModel, pk=customer_id)

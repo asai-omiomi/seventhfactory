@@ -60,65 +60,11 @@
         });
     }
    
-
-    // ボタンの表示/非表示を管理
-    function updateButtons() {
-        const workSections = Array.from(document.querySelectorAll('.work-section'));
-        const lastVisibleSectionReverseIndex = workSections.slice().reverse().findIndex(s => s.style.display !== 'none');
-        const lastVisibleSectionIndex = workSections.length - 1 - lastVisibleSectionReverseIndex;
-
-        // 追加ボタン
-        const addButton = document.getElementById('add-button');
-        if(lastVisibleSectionIndex == workSections.length - 1){
-            addButton.disabled = true;
-        } else{
-            addButton.disabled = false;
-        }
-
-        // 削除ボタン
-        workSections.forEach((section, index) => {
-            const removeButton = section.querySelector('.remove-button');
-
-            if(index == lastVisibleSectionIndex){
-                if(index != 0){
-                    removeButton.style.display = 'inline-block'; 
-                }else{
-                    removeButton.style.display = 'none'; 
-                }
-            } else{
-                removeButton.style.display = 'none';                    
-            }
-        });
-    }
-
-    function addEventListnerToWorkSectionsButtons(){
-        
-        const workSections = Array.from(document.querySelectorAll('.work-section'));
-
-        const addButton = document.getElementById('add-button');
-        addButton.addEventListener('click', (event) => {
-            const nextSection = workSections.find(s => s.style.display === 'none');
-            if (nextSection) {
-                nextSection.style.display = 'block';  // 次の勤務セクションを表示
-                updateButtons();
-            }
-        });
-        
-        workSections.forEach(section => {
-            const removeButton = section.querySelector('.remove-button');
-            removeButton.addEventListener('click', (event) => {
-                section.style.display = 'none';
-                updateButtons(); 
-            });
-        });
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
         toggleFieldsByWorkStatus();
         toggleFieldsByMorningTransport();
         toggleFieldsByReturnTransport();
         toggleFieldsByLunch();
-        updateButtons();
 
         document.getElementById('id_work_status').addEventListener('change', toggleFieldsByWorkStatus);
         document.getElementById('id_morning_transport_means').addEventListener('change', toggleFieldsByMorningTransport);
@@ -197,7 +143,7 @@
     </div>
     
     <div class="work-fields">
-        <div id="work1" class="work-section">
+        <div>
             勤務１
             {{ form.work1_start_time }}
             ～
@@ -214,10 +160,9 @@
                 <input type="radio" name="eat_lunch_at" value="1" {% if form.instance.eat_lunch_at == 1 %}checked{% endif %}>
                 昼食をここで食べる
             </label>
-            <button type=button class="remove-button btn-sm">削除</button>  
         </div>
     
-        <div id="work2" class="work-section" style="display: none;">   
+        <div>   
             勤務２
             {{ form.work2_start_time }}
             ～
@@ -227,10 +172,9 @@
                 <input type="radio" name="eat_lunch_at" value="2" {% if form.instance.eat_lunch_at == 2 %}checked{% endif %}>
                 昼食をここで食べる
             </label>
-            <button type=button class="remove-button btn-sm">削除</button>
         </div>
 
-        <div id="work3" class="work-section" style="display: none;">     
+        <div>     
             勤務３
             {{ form.work3_start_time }}
             ～
@@ -240,9 +184,8 @@
                 <input type="radio" name="eat_lunch_at" value="3" {% if form.instance.eat_lunch_at == 3 %}checked{% endif %}>
                 昼食をここで食べる
             </label>
-            <button type=button class="remove-button btn-sm">削除</button>
         </div>
-        <div id="work4" class="work-section" style="display: none;">     
+        <div>     
             勤務４
             {{ form.work4_start_time }}
             ～
@@ -252,9 +195,7 @@
                 <input type="radio" name="eat_lunch_at" value="4" {% if form.instance.eat_lunch_at == 4 %}checked{% endif %}>
                 昼食をここで食べる
             </label>
-            <button type=button class="remove-button btn-sm">削除</button>
         </div>
-        <button type=button id="add-button" class="btn-sm">勤務を追加</button>
     </div>
 
     <button class="btn-sm" type="submit" name="action" value="save">保存</button>
