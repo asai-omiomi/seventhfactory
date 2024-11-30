@@ -6,42 +6,6 @@
 
 {% block contents %}
 
-<script>
-    function toggleFieldsByWorkStatus() {
-        const workStatusField = document.getElementById('id_work_status');
-        const isOn = workStatusField.value == '0';
-        const targetFields = document.querySelectorAll('.work-fields');
-
-        targetFields.forEach(field => {
-            field.style.display = isOn ? 'block' : 'none';
-            const inputs = field.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                input.disabled = !isOn;
-            });
-        });
-    }
-
-    function toggleFieldsByLunch() {
-        const lunch = document.getElementById('id_lunch');
-        const eatLunch = (lunch.value == '0' || lunch.value == '1');
-
-        const targetFields = document.querySelectorAll('.eat-lunch-at');       
-
-        targetFields.forEach(field => {
-            field.style.display = eatLunch ? 'inline-block' : 'none';
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        toggleFieldsByWorkStatus();
-        toggleFieldsByLunch();
-
-        document.getElementById('id_work_status').addEventListener('change', toggleFieldsByWorkStatus);
-        document.getElementById('id_lunch').addEventListener('change', toggleFieldsByLunch);
-        document.getElementById('id_lunch').addEventListener('change', toggleFieldsByLunch);        
-    });
-</script>
-
 <h1>スタッフ勤務情報設定</h1>
 
 <h2>スタッフ名: {{ staff_name }}</h2>
@@ -60,7 +24,7 @@
     </div>
 
     <div class="work-fields">
-        <div>
+        <div id="work1" class="work-section">
             勤務１
             {{ form.work1_start_time }}
             ～
@@ -77,8 +41,9 @@
                 <input type="radio" name="eat_lunch_at" value="1" {% if form.instance.eat_lunch_at == 1 %}checked{% endif %}>
                 昼食をここで食べる
             </label>
+            <button type=button class="remove-button btn-sm">削除</button>  
         </div>
-        <div>
+        <div id="work2" class="work-section" style="display: none;">
             勤務２
             {{ form.work2_start_time }}
             ～
@@ -88,8 +53,9 @@
                 <input type="radio" name="eat_lunch_at" value="2" {% if form.instance.eat_lunch_at == 2 %}checked{% endif %}>
                 昼食をここで食べる
             </label>
+            <button type=button class="remove-button btn-sm">削除</button>
         </div>
-        <div> 
+        <div id="work3" class="work-section" style="display: none;"> 
             勤務３
             {{ form.work3_start_time }}
             ～
@@ -99,8 +65,9 @@
                 <input type="radio" name="eat_lunch_at" value="3" {% if form.instance.eat_lunch_at == 3 %}checked{% endif %}>
                 昼食をここで食べる
             </label>
+            <button type=button class="remove-button btn-sm">削除</button>
         </div>
-        <div>
+        <div id="work4" class="work-section" style="display: none;">
             勤務４
             {{ form.work4_start_time }}
             ～
@@ -110,11 +77,17 @@
                 <input type="radio" name="eat_lunch_at" value="4" {% if form.instance.eat_lunch_at == 4 %}checked{% endif %}>
                 昼食をここで食べる
             </label>
+            <button type=button class="remove-button btn-sm">削除</button>
         </div>
+        <button type=button id="add-button" class="btn-sm">勤務を追加</button>
     </div>
 
     <button class="btn-sm" type="submit" name="action" value="save">保存</button>
     <button class="btn-sm" type="submit" name="action" value="pattern" >パターンを呼び出す</button>
     <button class="btn-sm" type="submit" name="action" value="cancel">キャンセル</button>
 </form>
+<script>
+    setupToggleWorkStatusEventListener();
+    setupToggleLunchEventListener();
+</script>
 {% endblock %}
