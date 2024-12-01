@@ -105,7 +105,9 @@
                 <th>お弁当</th>
                 <th>朝</th>
                 <th>帰り</th>
+                {% if request.user.is_superuser %}
                 <th></th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -160,11 +162,13 @@
                 <td>
                     {{customer.return_transport | linebreaksbr}}
                 </td>
+                {% if request.user.is_superuser %}
                 <td class="text-center">
                     <button class="btn-sm" type="submit" name="edit_customer" value="{{ customer.id }}">
                         編集
                     </button>
                 </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
@@ -180,7 +184,9 @@
                 <th>お弁当</th>
                 <th>送迎(朝)</th>
                 <th>送迎(帰り)</th>
+                {% if request.user.is_superuser %}
                 <th></th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -216,11 +222,13 @@
                     {% if not forloop.last %}<br>{% endif %}
                     {% endfor %}
                 </td>
+                {% if request.user.is_superuser %}
                 <td class="text-center">
                     <button class="btn-sm" type="submit" name="edit_staff" value="{{staff.id}}">
                         編集
                     </button>
                 </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>

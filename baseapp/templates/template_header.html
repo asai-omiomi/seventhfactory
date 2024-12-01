@@ -7,6 +7,7 @@
         <!-- ナビゲーションメニュー -->
         <div class="collapse navbar-collapse align-items-center" id="navbarNavAltMarkup">
           <ul class="navbar-nav d-flex w-100 justify-content-start">
+            {% if request.user.is_superuser %}
             <li class="nav-item">
               <a class="nav-link nav-link-custom" href="{% url 'info_today' %}">ホーム</a>
             </li>
@@ -16,6 +17,11 @@
             <li class="nav-item">
               <a class="nav-link nav-link-custom" href="{% url 'staff' %}">スタッフ情報</a>
             </li>
+            {% else %}
+            <li class="nav-item">
+              <p style="color:white;">SEVENTH FACTORY</p>
+            </li>            
+            {% endif %}
             <li class="nav-item ms-auto">
               <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link nav-link-custom">
                 ログアウト
