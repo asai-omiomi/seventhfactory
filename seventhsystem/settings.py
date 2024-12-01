@@ -19,6 +19,8 @@ from dj_database_url import parse as dburl
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env()
+env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -26,13 +28,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-#h#3y*!-jr%_rf@w)fg*sd_3wni98$nb4^pfqfget2x(!bp^v5"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = False
+# 環境区分の取得（development または production）
+ENVIRONMENT = env("DJANGO_ENV", default="development")
 
-if not DEBUG:
-    env = environ.Env()
-    env.read_env(os.path.join(BASE_DIR, ".env"))
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = ENVIRONMENT == "development"
 
 
 ALLOWED_HOSTS = ["*"]
@@ -85,7 +85,7 @@ WSGI_APPLICATION = "seventhsystem.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-if DEBUG:
+if ENVIRONMENT == "development":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -137,7 +137,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 
-if DEBUG:
+if ENVIRONMENT == "development":
     STATICFILES_DIRS = (
         os.path.join(BASE_DIR, 'static'),
     )
