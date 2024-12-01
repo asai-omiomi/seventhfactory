@@ -1,7 +1,6 @@
 # models.py
 from django.db import models
 from enum import Enum
-import datetime
 
 WORK_SESSION_COUNT = 4
 

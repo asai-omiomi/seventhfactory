@@ -638,7 +638,7 @@ def customer_date_work(request, customer_id, work_date):
     customer_work = CustomerWorkModel.objects.filter(customer=customer, work_date=work_date).first()
 
     if not customer_work:
-        customer_work = create_customer_work_by_pattern(customer=customer, work_date=work_date)
+        customer_work = create_customer_work_by_pattern(customer_id=customer_id, work_date=work_date)
 
     form = CustomerWorkForm(instance = customer_work)
 
