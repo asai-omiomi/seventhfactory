@@ -18,7 +18,9 @@
   
   <body>
       
-    {% include 'template_header.html' %}
+    {% block header %}
+      {% include 'template_header.html' %}
+    {% endblock %}
 
     {% block contents %}{% endblock %}
 

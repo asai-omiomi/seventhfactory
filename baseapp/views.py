@@ -5,16 +5,13 @@ from django.views.generic.base import TemplateView
 from .forms import StaffForm, StaffWorkForm, CustomerForm, CustomerWorkForm, CalendarForm
 from .models import CustomerModel,CustomerWorkModel,StaffModel,StaffWorkModel, WorkPlaceModel,TransportMeansEnum,LunchEnum, StaffWorkStatusEnum, CustomerWorkStatusEnum, WORK_SESSION_COUNT, CurrentStatusEnum
 from datetime import datetime, timedelta
+from django.contrib.auth.decorators import login_required
 
 class IndexView(TemplateView):
     template_name = 'index.html'
     
 def info_today(request):
     work_date = datetime.now().date()
-    return redirect('info', work_date)
-
-def info_tomorrow(request):
-    work_date = datetime.now().date() + timedelta(days=1)
     return redirect('info', work_date)
 
 def info(request, work_date):
@@ -387,14 +384,6 @@ def to_next_status(customer_id, work_date):
             customer_work.current_status = CurrentStatusEnum.AFTER_WORK.value
 
     customer_work.save()
-
-def config_work_today(request):
-    work_date = datetime.now().date()
-    return redirect('config_work', work_date)
-
-def config_work_tomorrow(request):
-    work_date = datetime.now().date() + timedelta(days=1)
-    return redirect('config_work', work_date)
 
 def config_work(request, work_date):
 

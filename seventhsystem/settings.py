@@ -49,6 +49,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "baseapp.middleware.LoginRequiredMiddleware"
 ]
 
 ROOT_URLCONF = "seventhsystem.urls"
@@ -127,3 +128,7 @@ STATICFILES_DIRS = (
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGIN_URL = "/login/"  # ログインページ
+LOGIN_REDIRECT_URL = "/info_today"  # ログイン後のリダイレクト先
+LOGOUT_REDIRECT_URL = "/"  # ログアウト後のリダイレクト先

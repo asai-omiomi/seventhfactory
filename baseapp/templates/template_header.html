@@ -5,19 +5,25 @@
       <div class="container">
 
         <!-- ナビゲーションメニュー -->
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
-          <ul class="navbar-nav">
+        <div class="collapse navbar-collapse align-items-center" id="navbarNavAltMarkup">
+          <ul class="navbar-nav d-flex w-100 justify-content-start">
             <li class="nav-item">
-              <a class="nav-link nav-link-custom {% if request.resolver_match.url_name == 'info_today' %}active{% endif %}"
-                href="{% url 'info_today' %}">ホーム</a>
+              <a class="nav-link nav-link-custom" href="{% url 'info_today' %}">ホーム</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom {% if request.resolver_match.url_name == 'customer' %}active{% endif %}"
-                href="{% url 'customer' %}">利用者情報</a>
+              <a class="nav-link nav-link-custom" href="{% url 'customer' %}">利用者情報</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom {% if request.resolver_match.url_name == 'staff' %}active{% endif %}"
-                href="{% url 'staff' %}">スタッフ情報</a>
+              <a class="nav-link nav-link-custom" href="{% url 'staff' %}">スタッフ情報</a>
+            </li>
+            <li class="nav-item ms-auto">
+              <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link nav-link-custom">
+                ログアウト
+              </a>
+
+              <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
+                  {% csrf_token %}
+              </form>
             </li>
           </ul>
         </div>

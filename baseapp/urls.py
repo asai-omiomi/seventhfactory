@@ -1,18 +1,20 @@
 # urls.py
 
 from django.urls import path
+from django.contrib.auth.views import LoginView, LogoutView
 from . import views
+
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
 
-    path('info_today', views.info_today, name='info_today'),
-    path('info_tomorrow', views.info_tomorrow, name='info_tomorrow'),     
+    path("login/", LoginView.as_view(template_name="login.html"), name="login"),
+    path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),
+
+    path('info_today/', views.info_today, name='info_today'),     
     path('info/<str:work_date>/', views.info, name='info'),      
     path('info_dispatch/<str:work_date>/', views.info_dispatch, name='info_dispatch'),   
 
-    path('config/work/today/', views.config_work_today, name='config_work_today'),
-    path('config/work/tomorrow/', views.config_work_tomorrow, name='config_work_tomorrow'),
     path('config/work/<str:work_date>/', views.config_work, name='config_work'),
     path('config/work/staff/<int:staff_id>/<str:work_date>/', views.staff_date_work, name='staff_date_work'),
     path('config/work/update/staff/<int:staff_id>/<str:work_date>/', views.config_work_update_staff, name='config_work_update_staff'),
