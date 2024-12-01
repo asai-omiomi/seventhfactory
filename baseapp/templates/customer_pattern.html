@@ -9,7 +9,7 @@
 
 <h1>利用者情報設定</h1>
 
-<form action="{% url 'config_customer_save' customer_id=customer_id %}" method="post">
+<form id="form" action="{% url 'config_customer_save' customer_id=customer_id %}" method="post">
     {% csrf_token %}
 
     <div>
@@ -105,7 +105,11 @@
             <button type=button class="remove-button btn-sm">削除</button> 
         </div>
 
-        <div id="work2" class="work-section" style="display: none;">
+        <div id="work2" class="work-section" 
+        {% if not form.work2_place.value %}
+        style="display: none;"
+        {% endif %}
+        >
             勤務２
             {{ form.work2_start_time }}
             ～
@@ -117,7 +121,11 @@
             </label>
             <button type=button class="remove-button btn-sm">削除</button>
         </div>
-        <div id="work3" class="work-section" style="display: none;">
+        <div id="work3" class="work-section" 
+        {% if not form.work3_place.value %}
+        style="display: none;"
+        {% endif %}
+        >
             勤務３
             {{ form.work3_start_time }}
             ～
@@ -129,7 +137,11 @@
             </label>
             <button type=button class="remove-button btn-sm">削除</button>
         </div>
-        <div id="work4" class="work-section" style="display: none;">
+        <div id="work4" class="work-section" 
+        {% if not form.work4_place.value %}
+        style="display: none;"
+        {% endif %}
+        >
             勤務４
             {{ form.work4_start_time }}
             ～
@@ -144,12 +156,13 @@
         <button type=button id="add-button" class="btn-sm">勤務を追加</button>
     </div>
 
-    <button class="btn-sm" type="submit">保存</button>
+    <button class="btn-sm" type="submit" name="action" value="save">保存</button>
     <button class="btn-sm" type="button" onclick="history.back();">キャンセル</button>
 </form>
 
 <script>
     setupToggleTransportEventListener();
     setupToggleLunchEventListener();
+    setupFormValidation();
 </script>
 {% endblock %}

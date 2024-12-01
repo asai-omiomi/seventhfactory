@@ -10,7 +10,7 @@
 
 <h5>利用者名: {{ customer_name }}</h5>
 
-<form action="{% url 'config_work_update_customer' customer_id=customer_id work_date=work_date%}"
+<form id="form" action="{% url 'config_work_update_customer' customer_id=customer_id work_date=work_date%}"
     method="post">
     {% csrf_token %}
 
@@ -80,13 +80,6 @@
             ～
             {{ form.work1_end_time }}
             {{ form.work1_place }}
-            {% if form.work1_place.errors %}
-            <div class="text-danger">
-                {% for error in form.work1_place.errors %}
-                    <p>{{ error }}</p>
-                {% endfor %}
-            </div>
-            {% endif %}
             <label class="eat-lunch-at">
                 <input type="radio" name="eat_lunch_at" value="1" {% if form.instance.eat_lunch_at == 1 %}checked{% endif %}>
                 昼食をここで食べる
@@ -94,7 +87,11 @@
             <button type=button class="remove-button btn-sm">削除</button>  
         </div>
     
-        <div id="work2" class="work-section" style="display: none;">   
+        <div id="work2" class="work-section" 
+        {% if not form.work2_place.value %}
+        style="display: none;"
+        {% endif %}
+        >  
             勤務２
             {{ form.work2_start_time }}
             ～
@@ -107,7 +104,11 @@
             <button type=button class="remove-button btn-sm">削除</button>
         </div>
 
-        <div id="work3" class="work-section" style="display: none;">     
+        <div id="work3" class="work-section" 
+        {% if not form.work3_place.value %}
+        style="display: none;"
+        {% endif %}
+        >   
             勤務３
             {{ form.work3_start_time }}
             ～
@@ -119,7 +120,11 @@
             </label>
             <button type=button class="remove-button btn-sm">削除</button>
         </div>
-        <div id="work4" class="work-section" style="display: none;">     
+        <div id="work4" class="work-section" 
+        {% if not form.work4_place.value %}
+        style="display: none;"
+        {% endif %}
+        >  
             勤務４
             {{ form.work4_start_time }}
             ～
@@ -143,6 +148,7 @@
     setupToggleWorkStatusEventListener();
     setupToggleTransportEventListener();
     setupToggleLunchEventListener();
+    setupFormValidation();
 </script>
 
 {% endblock %}

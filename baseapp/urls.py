@@ -18,7 +18,6 @@ urlpatterns = [
     path('config/work/update/staff/<int:staff_id>/<str:work_date>/', views.config_work_update_staff, name='config_work_update_staff'),
     path('config/work/customer/<int:customer_id>/<str:work_date>/', views.customer_date_work, name='customer_date_work'),
     path('config/work/update/customer/<int:customer_id>/<str:work_date>/', views.config_work_update_customer, name='config_work_update_customer'),
-    path('config/work/update/staff_and_customers_by_settings/<str:work_date>/', views.config_work_update_staff_and_customers_by_settings, name='config_work_update_staff_and_customers_by_settings'),
 
     path('config/staff/', views.staff, name='staff'),
     path('config/staff/dispatch/', views.config_staff_dispatch, name='config_staff_dispatch'),

@@ -9,13 +9,13 @@
 <h1>スタッフ勤務情報設定</h1>
 
 <h2>スタッフ名: {{ staff_name }}</h2>
-<form action="{% url 'config_work_update_staff' staff_id=staff_id work_date=work_date%}" method="post">
+<form id="form" action="{% url 'config_work_update_staff' staff_id=staff_id work_date=work_date%}" method="post">
     {% csrf_token %}
 
     <p>日付: {{ work_date }}</p>
 
     
-    <p>出勤/欠勤:{{ form.work_status }}</p>
+    <p>出勤/欠勤/有給:{{ form.work_status }}</p>
     
 
     <div class="work-fields">
@@ -43,7 +43,11 @@
             </label>
             <button type=button class="remove-button btn-sm">削除</button>  
         </div>
-        <div id="work2" class="work-section" style="display: none;">
+        <div id="work2" class="work-section" 
+        {% if not form.work2_place.value %}
+        style="display: none;"
+        {% endif %}
+        >
             勤務２
             {{ form.work2_start_time }}
             ～
@@ -55,7 +59,11 @@
             </label>
             <button type=button class="remove-button btn-sm">削除</button>
         </div>
-        <div id="work3" class="work-section" style="display: none;"> 
+        <div id="work3" class="work-section" 
+        {% if not form.work3_place.value %}
+        style="display: none;"
+        {% endif %}
+        >
             勤務３
             {{ form.work3_start_time }}
             ～
@@ -67,7 +75,11 @@
             </label>
             <button type=button class="remove-button btn-sm">削除</button>
         </div>
-        <div id="work4" class="work-section" style="display: none;">
+        <div id="work4" class="work-section" 
+        {% if not form.work4_place.value %}
+        style="display: none;"
+        {% endif %}
+        >
             勤務４
             {{ form.work4_start_time }}
             ～
@@ -89,5 +101,6 @@
 <script>
     setupToggleWorkStatusEventListener();
     setupToggleLunchEventListener();
+    setupFormValidation();
 </script>
 {% endblock %}

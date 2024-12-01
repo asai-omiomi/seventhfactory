@@ -457,13 +457,8 @@ def create_work_data(work_date):
     for customer in customers:
         apply_pattern_to_customer(customer.pk, work_date)
 
-
-def create_staff_work_by_pattern(staff_id, work_date):
+def create_staff_work_by_pattern(staff_id, work_date, work_status=None):
  
-    weekday_number = datetime.strptime(work_date, "%Y-%m-%d").date().weekday()
-
-    StaffWorkModel.objects.filter(staff_id=staff_id, work_date=work_date).delete()
-
     staff = get_object_or_404(StaffModel, pk=staff_id)
     staff_work = StaffWorkModel(
         staff=staff, work_date=work_date, staff_name=staff.name
@@ -471,21 +466,25 @@ def create_staff_work_by_pattern(staff_id, work_date):
 
     staff_work.staff_name = staff.name
 
-    # 曜日ごとのステータスを設定
-    if weekday_number == 0:
-        staff_work.work_status = staff.work_status_mon
-    elif weekday_number == 1:
-        staff_work.work_status = staff.work_status_tue
-    elif weekday_number == 2:
-        staff_work.work_status = staff.work_status_wed        
-    elif weekday_number == 3:
-        staff_work.work_status = staff.work_status_thu
-    elif weekday_number == 4:
-        staff_work.work_status = staff.work_status_fri        
-    elif weekday_number == 5:
-        staff_work.work_status = staff.work_status_sat   
-    elif weekday_number == 6:
-        staff_work.work_status = staff.work_status_sun
+    if work_status == StaffWorkStatusEnum.ON.value:
+        staff_work.work_status = work_status
+    else:
+        # 曜日ごとのステータスを設定
+        weekday_number = datetime.strptime(work_date, "%Y-%m-%d").date().weekday()
+        if weekday_number == 0:
+            staff_work.work_status = staff.work_status_mon
+        elif weekday_number == 1:
+            staff_work.work_status = staff.work_status_tue
+        elif weekday_number == 2:
+            staff_work.work_status = staff.work_status_wed        
+        elif weekday_number == 3:
+            staff_work.work_status = staff.work_status_thu
+        elif weekday_number == 4:
+            staff_work.work_status = staff.work_status_fri        
+        elif weekday_number == 5:
+            staff_work.work_status = staff.work_status_sat   
+        elif weekday_number == 6:
+            staff_work.work_status = staff.work_status_sun
 
     # ステータスが「OFFICE」の場合に詳細を設定
     if staff_work.work_status == StaffWorkStatusEnum.ON.value:
@@ -508,59 +507,13 @@ def create_staff_work_by_pattern(staff_id, work_date):
 
 def apply_pattern_to_staff(staff_id, work_date):
     staff_work = create_staff_work_by_pattern(staff_id, work_date)
+
+    StaffWorkModel.objects.filter(staff_id=staff_id, work_date=work_date).delete()
+
     staff_work.save()
 
-def make_staff_work_by_settings(staff, work_date):
+def create_customer_work_by_pattern(customer_id, work_date, work_status=None):
  
-    work_date = datetime.strptime(work_date, "%Y-%m-%d").date()
-    weekday_number = work_date.weekday()
-
-    # StaffWorkModelのインスタンスを作成
-    staff_work = StaffWorkModel(staff=staff, work_date=work_date)
-
-    staff_work.staff_name = staff.name
-
-    # 曜日ごとのステータスを設定
-    if weekday_number == 0:
-        staff_work.work_status = staff.work_status_mon
-    elif weekday_number == 1:
-        staff_work.work_status = staff.work_status_tue
-    elif weekday_number == 2:
-        staff_work.work_status = staff.work_status_wed        
-    elif weekday_number == 3:
-        staff_work.work_status = staff.work_status_thu
-    elif weekday_number == 4:
-        staff_work.work_status = staff.work_status_fri        
-    elif weekday_number == 5:
-        staff_work.work_status = staff.work_status_sat
-    elif weekday_number == 6:
-        staff_work.work_status = staff.work_status_sun
-
-    # ステータスが「ON」の場合に詳細を設定
-    if staff_work.work_status == StaffWorkStatusEnum.ON.value:
-        staff_work.work1_start_time = staff.work1_start_time
-        staff_work.work1_end_time = staff.work1_end_time
-        staff_work.work1_place = staff.work1_place
-        staff_work.work2_start_time = staff.work2_start_time
-        staff_work.work2_end_time = staff.work2_end_time
-        staff_work.work2_place = staff.work2_place
-        staff_work.work3_start_time = staff.work3_start_time
-        staff_work.work3_end_time = staff.work3_end_time
-        staff_work.work3_place = staff.work3_place
-        staff_work.work4_start_time = staff.work4_start_time
-        staff_work.work4_end_time = staff.work4_end_time
-        staff_work.work4_place = staff.work4_place
-        staff_work.lunch = staff.lunch
-        staff_work.eat_lunch_at = staff.eat_lunch_at
-
-    return staff_work
-
-def create_customer_work_by_pattern(customer_id, work_date):
- 
-    weekday_number = datetime.strptime(work_date, "%Y-%m-%d").date().weekday()
-
-    CustomerWorkModel.objects.filter(customer_id=customer_id, work_date=work_date).delete()
-
     customer = get_object_or_404(CustomerModel, pk=customer_id)
     customer_work = CustomerWorkModel(
         customer=customer, work_date=work_date, customer_name=customer.name
@@ -568,21 +521,25 @@ def create_customer_work_by_pattern(customer_id, work_date):
 
     customer_work.customer_name = customer.name
 
+    if work_status == CustomerWorkStatusEnum.OFFICE.value:
+        customer_work.work_status = work_status
+    else:
     # 曜日ごとのステータスを設定
-    if weekday_number == 0:
-        customer_work.work_status = customer.work_status_mon
-    elif weekday_number == 1:
-        customer_work.work_status = customer.work_status_tue
-    elif weekday_number == 2:
-        customer_work.work_status = customer.work_status_wed        
-    elif weekday_number == 3:
-        customer_work.work_status = customer.work_status_thu
-    elif weekday_number == 4:
-        customer_work.work_status = customer.work_status_fri        
-    elif weekday_number == 5:
-        customer_work.work_status = customer.work_status_sat   
-    elif weekday_number == 6:
-        customer_work.work_status = customer.work_status_sun
+        weekday_number = datetime.strptime(work_date, "%Y-%m-%d").date().weekday()
+        if weekday_number == 0:
+            customer_work.work_status = customer.work_status_mon
+        elif weekday_number == 1:
+            customer_work.work_status = customer.work_status_tue
+        elif weekday_number == 2:
+            customer_work.work_status = customer.work_status_wed        
+        elif weekday_number == 3:
+            customer_work.work_status = customer.work_status_thu
+        elif weekday_number == 4:
+            customer_work.work_status = customer.work_status_fri        
+        elif weekday_number == 5:
+            customer_work.work_status = customer.work_status_sat   
+        elif weekday_number == 6:
+            customer_work.work_status = customer.work_status_sun
 
     # ステータスが「OFFICE」の場合に詳細を設定
     if customer_work.work_status == CustomerWorkStatusEnum.OFFICE.value:
@@ -614,61 +571,10 @@ def create_customer_work_by_pattern(customer_id, work_date):
 
 def apply_pattern_to_customer(customer_id, work_date):
     customer_work = create_customer_work_by_pattern(customer_id, work_date)
+
+    CustomerWorkModel.objects.filter(customer_id=customer_id, work_date=work_date).delete()
+
     customer_work.save()
-
-def make_customer_work_by_settings(customer, work_date):
- 
-    work_date = datetime.strptime(work_date, "%Y-%m-%d").date()
-    weekday_number = work_date.weekday()
-
-    # CustomerWorkModelのインスタンスを作成
-    customer_work = CustomerWorkModel(customer=customer, work_date=work_date)
-
-    customer_work.customer_name = customer.name
-
-    # 曜日ごとのステータスを設定
-    if weekday_number == 0:
-        customer_work.work_status = customer.work_status_mon
-    elif weekday_number == 1:
-        customer_work.work_status = customer.work_status_tue
-    elif weekday_number == 2:
-        customer_work.work_status = customer.work_status_wed        
-    elif weekday_number == 3:
-        customer_work.work_status = customer.work_status_thu
-    elif weekday_number == 4:
-        customer_work.work_status = customer.work_status_fri        
-    elif weekday_number == 5:
-        customer_work.work_status = customer.work_status_sat   
-    elif weekday_number == 6:
-        customer_work.work_status = customer.work_status_sun
-
-    # ステータスが「OFFICE」の場合に詳細を設定
-    if customer_work.work_status == CustomerWorkStatusEnum.OFFICE.value:
-        customer_work.morning_transport_means=customer.morning_transport_means
-        customer_work.pickup_place=customer.pickup_place
-        customer_work.pickup_staff=customer.pickup_staff
-        customer_work.pickup_time=customer.pickup_time
-        customer_work.return_transport_means=customer.return_transport_means
-        customer_work.dropoff_place=customer.dropoff_place
-        customer_work.dropoff_staff=customer.dropoff_staff
-        customer_work.dropoff_time=customer.dropoff_time
-        customer_work.dropoff_car=customer.dropoff_car
-        customer_work.work1_start_time = customer.work1_start_time
-        customer_work.work1_end_time = customer.work1_end_time
-        customer_work.work1_place = customer.work1_place
-        customer_work.work2_start_time = customer.work2_start_time
-        customer_work.work2_end_time = customer.work2_end_time
-        customer_work.work2_place = customer.work2_place
-        customer_work.work3_start_time = customer.work3_start_time
-        customer_work.work3_end_time = customer.work3_end_time
-        customer_work.work3_place = customer.work3_place
-        customer_work.work4_start_time = customer.work4_start_time
-        customer_work.work4_end_time = customer.work4_end_time
-        customer_work.work4_place = customer.work4_place
-        customer_work.lunch = customer.lunch
-        customer_work.eat_lunch_at = customer.eat_lunch_at
-
-    return customer_work
 
 def staff_date_work(request, staff_id, work_date):
     
@@ -677,7 +583,7 @@ def staff_date_work(request, staff_id, work_date):
     staff_work = StaffWorkModel.objects.filter(staff=staff, work_date=work_date).first()
     
     if not staff_work:
-        staff_work = make_staff_work_by_settings(staff=staff, work_date=work_date)
+        staff_work = create_staff_work_by_pattern(staff_id=staff.pk, work_date=work_date)
 
     form = StaffWorkForm(instance = staff_work)
 
@@ -696,7 +602,11 @@ def config_work_update_staff(request, staff_id, work_date):
     if action == 'pattern':
         staff = get_object_or_404(StaffModel, pk=staff_id)
 
-        staff_work = make_staff_work_by_settings(staff=staff, work_date=work_date)
+        staff_work = create_staff_work_by_pattern(
+            staff_id=staff_id, 
+            work_date=work_date, 
+            work_status = StaffWorkStatusEnum.ON.value
+            )
 
         form = StaffWorkForm(instance = staff_work)
 
@@ -715,6 +625,7 @@ def config_work_update_staff(request, staff_id, work_date):
         form = StaffWorkForm(request.POST, instance=staff_work)
 
         if form.is_valid():
+            StaffWorkModel.objects.filter(staff_id=staff_id, work_date=work_date).delete()
             staff_work = form.save(commit=False)  # まずはコミットせずにインスタンスを取得
             staff_work.work_date = work_date  # work_dateを設定
             staff_work.save()  # インスタンスを保存
@@ -738,7 +649,7 @@ def customer_date_work(request, customer_id, work_date):
     customer_work = CustomerWorkModel.objects.filter(customer=customer, work_date=work_date).first()
 
     if not customer_work:
-        customer_work = make_customer_work_by_settings(customer=customer, work_date=work_date)
+        customer_work = create_customer_work_by_pattern(customer=customer, work_date=work_date)
 
     form = CustomerWorkForm(instance = customer_work)
 
@@ -757,7 +668,11 @@ def config_work_update_customer(request, customer_id, work_date):
     if action == 'pattern':
         customer = get_object_or_404(CustomerModel, pk=customer_id)
 
-        customer_work = make_customer_work_by_settings(customer=customer, work_date=work_date)
+        customer_work = create_customer_work_by_pattern(
+            customer_id = customer_id, 
+            work_date = work_date,
+            work_status = CustomerWorkStatusEnum.OFFICE.value
+            )
 
         form = CustomerWorkForm(instance = customer_work)
 
@@ -776,6 +691,7 @@ def config_work_update_customer(request, customer_id, work_date):
         form = CustomerWorkForm(request.POST, instance=customer_work)
 
         if form.is_valid():
+            CustomerWorkModel.objects.filter(customer_id=customer_id, work_date=work_date).delete()
             customer_work = form.save(commit=False)  # まずはコミットせずにインスタンスを取得
             customer_work.work_date = work_date
             form.save()
@@ -791,26 +707,6 @@ def config_work_update_customer(request, customer_id, work_date):
             })
     else: # cancel
         return redirect('info', work_date)
-
-def config_work_update_staff_and_customers_by_settings(request, work_date):
-
-    # StaffModelに存在し、StaffWorkModelに存在しないスタッフを取得
-    staffs_with_work_entry = StaffWorkModel.objects.filter(work_date=work_date).values_list('staff', flat=True)
-    staffs_without_work_entry = StaffModel.objects.exclude(id__in=staffs_with_work_entry)
-
-    # CustomerModelに存在し、CustomerWorkModelに存在しないスタッフを取得
-    customers_with_work_entry = CustomerWorkModel.objects.filter(work_date=work_date).values_list('customer', flat=True)
-    customers_without_work_entry = CustomerModel.objects.exclude(id__in=customers_with_work_entry)
-
-    for staff in staffs_without_work_entry:
-        staff_work = make_staff_work_by_settings(staff, work_date)
-        staff_work.save()    
-
-    for customer in customers_without_work_entry:
-        customer_work = make_customer_work_by_settings(customer, work_date)
-        customer_work.save()  
-
-    return redirect('config_work',work_date)
 
 def staff(request):
     staffs = StaffModel.objects.all().order_by('order')
