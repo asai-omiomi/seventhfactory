@@ -27,7 +27,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-#h#3y*!-jr%_rf@w)fg*sd_3wni98$nb4^pfqfget2x(!bp^v5"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = False
 
 if not DEBUG:
     env = environ.Env()
@@ -142,8 +143,8 @@ if DEBUG:
     )
 
 else:
-    STATIC_ROOT = str(BASE_DIR / "staticfiles")
-    # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    # STATIC_ROOT = str(BASE_DIR / "staticfiles")
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"    
 
 # Default primary key field type
