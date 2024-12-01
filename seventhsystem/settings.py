@@ -29,6 +29,11 @@ SECRET_KEY = "django-insecure-#h#3y*!-jr%_rf@w)fg*sd_3wni98$nb4^pfqfget2x(!bp^v5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+if not DEBUG:
+    env = environ.Env()
+    env.read_env(os.path.join(BASE_DIR, ".env"))
+
+
 ALLOWED_HOSTS = ["*"]
 
 
@@ -79,12 +84,19 @@ WSGI_APPLICATION = "seventhsystem.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+
+else:
+    default_dburl = "sqlite:///" + str(BASE_DIR / "db.sqlite3")
+    DATABASES = {
+        "default": config("DATABASE_URL", default=default_dburl, cast=dburl),
+    }
 
 
 # Password validation
@@ -123,9 +135,15 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+
+if DEBUG:
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR, 'static'),
+    )
+
+else:
+    STATIC_ROOT = str(BASE_DIR / "static")
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"    
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
